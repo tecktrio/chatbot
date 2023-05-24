@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mybot</title>
+</head>
+<body style="padding: 0px;margin: 0px;" onclick="playAudio()" >
+    <div style="height: 3000px;background-color: blue;">hello</div>
+
+    <div style="height: 30vh;background-color: red;" oncl>hello</div>
+    <!-- cotrol bot -->
+    <div style="position: absolute;width: 100vw;bottom: 0;z-index: 5;"> 
+        <marquee direction="right" scrollamount="50">
+            <img src="https://th.bing.com/th/id/R.0c4b61db17a53de6ba0f4ffa3b842c2b?rik=rjYT80Y8%2fDP27Q&riu=http%3a%2f%2ffc08.deviantart.net%2ffs70%2ff%2f2014%2f075%2f7%2fa%2frunning_pikachu_animation_by_miyakolupa-d7afleh.gif&ehk=GpjEWh6k7%2bIEa4PVlUtMnwPsYc%2bcdzd%2fUqrwrSAKutE%3d&risl=&pid=ImgRaw&r=0" width="200px">
+        </marquee>
+    </div>
+    <input type="button" onclick="playAudio()" value="play">
+
+    <!-- end bot -->
+
+    <!-- audio on mouse click -->
+    <!-- <audio src="/media/songs.mp3"  id="audio" style="display:none"></audio>
+    <script>
+         body = document.getElementById("body")
+         body.onmousedown =function(){
+            console.log('scrolling')
+            document.getElementById("audio").play();
+         }
+    </script> -->
+    <!-- end -->
+ 
+        <!-- Rest of your HTML content -->
+        
+        <script>
+            let i= 1
+            function playAudio() {
+            if(i==1){
+            i = i+1;
+            var audio = new Audio('/media/songs.mp3');
+            audio.play();
+            } }
+        </script>
+</body>
+</html>
