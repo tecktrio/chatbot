@@ -2,17 +2,16 @@ import os
 from django.http import HttpResponse
 from django.shortcuts import render
 from twilio.rest import Client
+
+from mybot.settings import TWILIO_ACCOUNT_SID, TWILIO_TOKEN
 from .chatbot_keywords import chatbot_keywords
-account_sid = 'ACb44b91cc79bde5f60515ac29b4a6da71'
-auth_token = '67450e31eef2339776b92603b996af5d'
+account_sid = TWILIO_ACCOUNT_SID
+auth_token = TWILIO_TOKEN
 client = Client(account_sid, auth_token)
 from django.views.decorators.csrf import csrf_exempt
-import openai
 # Create your views here.
 def mybot(request):
-    openai.organization = "org-zmd9VBXgOdzNW5zgZ8ci8RzG"
-    openai.api_key = "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"
-    # messages = 
+   
     
 # import openai
 
