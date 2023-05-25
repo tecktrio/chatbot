@@ -34,7 +34,7 @@ def whatsupbot(request):
     message = request.POST['Body']
     name = request.POST['ProfileName']
     From = request.POST['From']
-    input_data = str(message).split(' ')
+    input_data = str(message).lower().split(' ')
     
     keywords = chatbot_keywords
     
@@ -47,7 +47,7 @@ def whatsupbot(request):
         
     for k in keywords:
         if k in input_data:
-            data = keywords[str(k).lower()]
+            data = keywords[k]
             send(data)
             
 
