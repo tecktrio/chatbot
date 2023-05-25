@@ -47,7 +47,7 @@ def whatsupbot(request):
         
     for k in keywords:
         if k in input_data:
-            data = keywords[k]
+            data = keywords[str(k).lower()]
             send(data)
             
 
