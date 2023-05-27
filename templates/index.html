@@ -8,7 +8,7 @@
 </head>
 <body style="padding: 0px;margin: 0px;" 
 >
-    <div style="height: 3000px;background-color: blue;"><p onmouseenter="send('read',this.innerText)">hello how are you</p></div>
+    <div style="height: 3000px;background-color: blue;"><p onmouseenter="send('read',this.innerText)" onmouseleave="">hello how are you</p></div>
 
     <div style="height: 30vh;background-color: red;" onmouseenter="send('read',this.innerText)" >Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor nesciunt aliquid consequatur cumque animi voluptate provident. Error hic praesentium quas dolorem voluptates, voluptatum minus aspernatur, quisquam, porro quam est at!</div>
     <!-- moving bot -->
@@ -19,26 +19,45 @@
     </div>
     <!-- end -->
 
-        <!--webspeak -->
-        <!-- onmouseenter="send('read',this.innerText)" -->
+   <!--webspeak -->
+        <!-- speak_on_mousehover-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
         <script>
-            function send(key,text) {  
-                console.log(text)
+        
+        content = document.querySelector('.speak_on_mousehover')
+        content.addEventListener('mouseenter',()=>{
+            speak('read',content.innerText);
+        });        
+        content.addEventListener('mouseleave',()=>{
+            dont_speak();
+        });
+  
+            function playAudio(text){
+                let utternance = new SpeechSynthesisUtterance(text)
+                console.log('speaking',text)
+                speechSynthesis.speak(utternance)
+                console.log('done');
+                
+             }
+            function dont_speak(){
+                speechSynthesis.cancel();
+            };
+            function speak(key,text) {  
+                <!--console.log(text)-->
             speechSynthesis.cancel()
             var jsondata = JSON.stringify({
                 key:key,
                 value:text
             });  
             $.ajax({
-                url: "http://127.0.0.1:8000/mybot/webbot",
+                url: "https://widecityshopping.tk/mybot/webbot",
                 method: "POST",        
                 data: jsondata,
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
                 },
                 contentType: "application/json",
-                success: function(data){;
+                success: function(data){
                 playAudio(data['voice'])
                 },
                 error: function(errMsg) {
@@ -46,11 +65,7 @@
                 }
             });
         };
-            function playAudio(text){
-                let utternance = new SpeechSynthesisUtterance(text)
-                speechSynthesis.speak(utternance)
-                
-             }
+
         </script>
         <!--  end  -->
 </body>

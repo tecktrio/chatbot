@@ -19,9 +19,9 @@ def mybot(request):
 @csrf_exempt
 def whatsupbot(request):
     print(request)
-    message = request.POST['Body']
-    name = request.POST['ProfileName']
-    From = request.POST['From']
+    message = request.POST.get('Body')
+    name = request.POST.get('ProfileName')
+    From = request.POST.get('From')
     input_data = str(message).lower().split(' ')
     
     keywords = chatbot_keywords
