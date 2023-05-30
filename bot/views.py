@@ -141,11 +141,11 @@ def Dashboard(request):
         total_mail_id = admin.total_mail_id
         menus = [{
             'title':'DashBoard',
-            'link':'/mybot/dashboard'
+            'link':'dashboard'
             },
             {
             'title':'Chatbots',
-            'link':'/bots/chatbots'
+            'link':'chatbots'
         }]
         list_menu = [
             # {
