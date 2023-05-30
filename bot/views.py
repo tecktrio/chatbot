@@ -192,8 +192,10 @@ def whatsupbot(request):
         message = request.POST.get('Body')
         name = request.POST.get('ProfileName')
         From = request.POST.get('From')
+        To = request.POST.get('To')
+        print(To,From)
         input_data = str(message).lower().split(' ')
-        Bot_contact = '+14155238886'
+        Bot_contact = To[9:]
         keywords = chatbot_keywords
         
         def send(data):
@@ -206,6 +208,10 @@ def whatsupbot(request):
         #     message = str(message).lower()
         # else:
         #     send('your replay is not found. please provide a valid replay')
+        try:
+            message = str(message).lower()
+        except:
+            pass
         brain = 'collect_data'#intelligent, pretrained
         data = 'sry, i am not able to recognize you. my mind is blank.type start please.'
         if brain=='intelligent':
@@ -216,6 +222,9 @@ def whatsupbot(request):
                     new_user = Users.objects.create(contact=From[9:])
                     admin_email = BotCollection.objects.get(Bot_contact=Bot_contact).admin_email
                     new_user.admin_email = admin_email
+                    admin =  Admins.objects.get(email=admin_email)
+                    admin.total_customers =  admin.total_contact+1
+                    admin.save()
                     new_user.save()
                     data = 'Hi, Seems like new to here. My name is Widy, i can here to assist you. I am here with a good news. I have opened an account for you just now. To start type "start"'
                     # print(From[9:])
@@ -262,6 +271,7 @@ def whatsupbot(request):
                 # else:
                 #     data = 'You should type start to continue.'
         send(data)
+        return HttpResponse('bot is running')
     else:
         return HttpResponse("bot is running")
 

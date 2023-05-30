@@ -11,6 +11,7 @@
         display: flex;
         justify-content: center;
         background-image: url('https://wallpapercave.com/wp/lif7e06.jpg');
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     }
     .form{
         margin: 10%;
@@ -60,12 +61,19 @@
         border: 1px white;
         border-radius: 5px;
     }
+    @media screen and (max-width: 600px) {
+        .form{
+            width: 100%;
+            margin: 0px;
+            height: 100%;
+        }
+}
 </style>
 <body class="container">
     <form action="/login" method="POST" class="form">
         <div class="heading">
             <h2>Login</h2>
-            <p>login to your account</p>
+            <p>login to your account, Welcome Back!</p>
             <P style="color: red;">{{error}}</P>
         </div>
         <div class="input">
