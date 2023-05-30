@@ -32,5 +32,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin', admin.site.urls),
-    path('mybot', include('bot.urls')),
+    path('bots', include('bot.urls')),
 ]+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)

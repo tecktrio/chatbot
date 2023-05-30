@@ -79,8 +79,10 @@ WSGI_APPLICATION = 'mybot.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME':'widy',
+        'USER':'root',
+        'PASSWORD':'1234'
     }
 }
 
@@ -120,6 +122,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'templates/dashboard')
+]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media'
 # Default primary key field type
@@ -130,3 +136,4 @@ TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
 TWILIO_TOKEN = config('TWILIO_TOKEN')
 
 CORS_ORIGIN_ALLOW_ALL = True
+OPEN_AI_KEY = config('OPEN_AI_KEY')
