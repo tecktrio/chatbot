@@ -3,13 +3,20 @@
 # printing the result
 
 
-chatbot_keywords = {
-    'hi':'hello, my name is Widy. i am the ai assistant of amal sir. Please type your name.',
-    'hello':'hello, my name is Widy. i am the ai assistant of amal sir. How can i help you.',
-    'help':"Don't worry, i can help you. you can ask what ever question you want to ask to amal. i will try to answer it by my ai technology. ",
-    'my name':'Oo i already know your name, eeee',
-    'number':'if you want to contact amal sir, please call at +91 9946658045, whats up is also available at this number. He might be busy right now. Please message him if the requirement is not so important.'
-}
+questions_for_data_collection_task  = [
+    {
+        'ask':'please provide your first name?',
+        'field':'first_name'
+    },
+    {
+        'ask':'what is your last name ?',
+        'field':'last_name'
+    },
+    {
+        'ask':'what is your email?',
+        'field':'email'
+    }
+]
 
 do_not_understand =[
     'Sorry, i am not able to predict what is your exact need from amal. please contact to 9946658045.',

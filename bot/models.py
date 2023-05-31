@@ -8,6 +8,7 @@ class Users(models.Model):
     count = models.IntegerField(default=-1)#1,2,3
     first_name=models.CharField(max_length=100,default='')
     last_name=models.CharField(max_length=100,default='')
+    waiting_for=models.CharField(max_length=100,default='')
     
     
     def __str__(self) -> str:
@@ -32,6 +33,7 @@ class BotCollection(models.Model):
     Bot_contact=models.CharField(max_length=20)
     Bot_name=models.CharField(max_length=20,default='')
     Bot_Task=models.CharField(max_length=20,choices=(('intelligent_bot','intelligent_bot'),('collect_data','collect_data')),default='collect_data')
+    Bot_Status=models.CharField(max_length=20,choices=(('running','running'),('not_running','not_running')),default='running')
     
     
     def __str__(self) -> str:

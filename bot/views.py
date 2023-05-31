@@ -14,8 +14,7 @@ from rest_framework.views import APIView
 from .serializers import User_Serializer
 from .models import Admins, BotCollection, Users
 from mybot.settings import TWILIO_ACCOUNT_SID, TWILIO_TOKEN
-from .chatbot_keywords import chatbot_keywords
-from .chatbot_keywords import do_not_understand
+from .chatbot_keywords import questions_for_data_collection_task
 from django.views.decorators.csrf import csrf_exempt
 from .intelligence import getIntelligent
 # Create your views here.
@@ -24,7 +23,7 @@ from .intelligence import getIntelligent
 account_sid = TWILIO_ACCOUNT_SID
 auth_token = TWILIO_TOKEN
 client = Client(account_sid, auth_token)
-
+waiting_for = ''
 # 
 def Bots(request):
     return render(request,'index.html')
@@ -37,9 +36,15 @@ def bot_registration(request):
         bot_name = request.POST.get('bot_name')
         bot_task = request.POST.get('bot_task')
         if bot_contact != '':
-            new_bot =BotCollection.objects.create(admin_email=admin.email,Bot_contact = bot_contact,Bot_name = bot_name, Bot_Task = bot_task)
-            new_bot.save()
-            return render(request,'bot_registration.html',{'success':'Bot registered successfully. you can now go to dashboard.'})
+            if not BotCollection.objects.filter(Bot_contact=bot_contact).exists():
+                if not BotCollection.objects.filter(Bot_name=bot_name).exists():
+                    new_bot =BotCollection.objects.create(admin_email=admin.email,Bot_contact = bot_contact,Bot_name = bot_name, Bot_Task = bot_task)
+                    new_bot.save()
+                    return render(request,'bot_registration.html',{'success':'Bot registered successfully. you can now go to dashboard.'})
+                else:
+                    return render(request,'bot_registration.html',{'error':'Bot name is already taken'})
+            else:
+                return render(request,'bot_registration.html',{'error':'This bot is already registered.please check your bot list'})        
         else:
             return render(request,'bot_registration.html',{'error':'provide a valid bot number'})
     return render(request, 'bot_registration.html')
@@ -58,8 +63,11 @@ def check_user_login_status(request):
     return False
 
 def get_admin(request):
+    try:
         email = request.COOKIES['widecity_chatbot_email']
         return Admins.objects.get(email=email)
+    except:
+        return redirect(Logout)
         
 
 @csrf_exempt
@@ -183,94 +191,145 @@ def Dashboard(request):
         return render(request, 'dashboard/index.html',context)
 
 def chatbots(request):
-    return redirect(bot_registration)
+    admin_email = get_admin(request).email
+    bots = BotCollection.objects.filter(admin_email=admin_email)
+    context={
+        'bots':bots
+        }
+    return render(request,'Chatbots.html',context)
+
+
+# This method works as the endpoint for whatsup bots
 
 @csrf_exempt
 def whatsupbot(request):
-    print(request)
+    # handles the post request comming from twilio
+    '''This will only work if the access token and accound id is valid. '''
     if request.method == 'POST':
+        # setting up global variables
+        global waiting_for
+        # gathering the neccessary fields from the post request
         message = request.POST.get('Body')
         name = request.POST.get('ProfileName')
         From = request.POST.get('From')
         To = request.POST.get('To')
-        print(To,From)
-        input_data = str(message).lower().split(' ')
-        Bot_contact = To[9:]
-        keywords = chatbot_keywords
         
-        def send(data):
-            message = client.messages.create(
-                                    from_=f'whatsapp:{Bot_contact}',
-                                    body=data,
-                                    to=From
-                                )
-        # if isinstance(message,str):
-        #     message = str(message).lower()
-        # else:
-        #     send('your replay is not found. please provide a valid replay')
+        # filtering the data for processing
+        message_as_list = str(message).lower().split(' ')
+        bot_number = To[9:]
+                
+        # trying to make the incomming message to lower case for enabling non case sensitive
         try:
             message = str(message).lower()
         except:
             pass
-        brain = 'collect_data'#intelligent, pretrained
-        data = 'sry, i am not able to recognize you. my mind is blank.type start please.'
+
+        # this method will send the message back to the user/twilio
+        def send(data):
+            client.messages.create(
+                                    from_=f'whatsapp:{bot_number}',
+                                    body=data,
+                                    to=From
+                                )
+
+        
+        # Verifying the bot and choosing the type of brain
+        # intelligent, pretrained , this can be changed from admin dashboard
+        if BotCollection.objects.filter(Bot_contact=bot_number).exists():
+            bot = BotCollection.objects.get(Bot_contact=bot_number)
+            brain = bot.Bot_Task
+        else:
+            send('I am not registered to any companies. Please register my number at bots.widecity.in if you are my owner.')
+            return HttpResponse('bot is running')
+            
+        data = 'sry, i am not able to recognize you. my mind is blank.'
+        
+        # setting up the response system according to the brain
         if brain=='intelligent':
+            # forwarding the control to intelligent system for response
             data = getIntelligent(message)
+            
         elif brain=='collect_data':
+            '''checking whether the user is new to the admin'''
             if not Users.objects.filter(contact=From[9:]).exists():
-                if BotCollection.objects.filter(Bot_contact=Bot_contact).exists():
-                    new_user = Users.objects.create(contact=From[9:])
-                    admin_email = BotCollection.objects.get(Bot_contact=Bot_contact).admin_email
-                    new_user.admin_email = admin_email
-                    admin =  Admins.objects.get(email=admin_email)
-                    admin.total_customers =  admin.total_contact+1
-                    admin.save()
-                    new_user.save()
-                    data = 'Hi, Seems like new to here. My name is Widy, i can here to assist you. I am here with a good news. I have opened an account for you just now. To start type "start"'
-                    # print(From[9:])
-                else:
-                    data = 'Your bot does not belong to any user. Please be aware. '
+                '''New User'''
+                # creating the user account
+                new_user = Users.objects.create(contact=From[9:])
+                print('New user, Account created successfully.')
+                
+                # getting the admin_details of the bot
+                admin_email = BotCollection.objects.get(Bot_contact=bot_number).admin_email
+                
+                # adding this user account to the admin data
+                new_user.admin_email = admin_email
+                new_user.save()
+
+                data = 'Hi, Seems like new to here. My name is Widy, i can here to assist you. I am here with a good news. I have opened an account for you just now."'
+                send(data)
+                whatsupbot(request)
             else:
-                # if str(message).lower() == 'start':
-                    user = Users.objects.get(contact=From[9:])
+                '''existing user'''
+                # fetching the user information from database
+                user = Users.objects.get(contact=From[9:])
+                         
+                # waiting for response from the user is the bot already asked one
+                if user.waiting_for == 'first_name':
+                    user.first_name = message
+                    waiting_for = ''
+                    user.save()
+                if user.waiting_for == 'last_name':
+                    user.last_name = message
+                    waiting_for = ''
+                    user.save()
+                if user.waiting_for == 'email':
+                    user.email = message
+                    waiting_for = ''
+                    user.save()
+                if user.waiting_for == 'contact':
+                    user.contact = message
+                    waiting_for = ''
+                    user.save()
                     
-                    if message == 'edit':
-                        user.count = 0
-                        user.save()
                     
-                    if message == 'start':
-                        user.count = 0
-                        user.save()
+                # preparing the questions to ask (update from dashboard)
+                questions  = questions_for_data_collection_task
+                
+                # updating the questions to ask
+                '''question are updated based on the question file that can be controlled from dashboard'''
+                for question in questions:
+                    field = question['field']
+                    #  replay if there is nother to ask.
+                    data = 'Thank you, We will contact you soon.'
+                    got_a_question = False
+                    # if first_name required
+                    if 'first_name' == field:
+                        if user.first_name == '':
+                            data = question['ask']
+                            got_a_question = True
+                    # if last_name required
+                    if 'last_name' == field:
+                        if user.last_name == '':
+                            data = question['ask']
+                            got_a_question = True
+                    # if emai is required
+                    if 'email' == field:
+                        if user.email == '':
+                            data = question['ask']
+                            got_a_question = True
+                    #  if contact is required
+                    if 'contact' == field:
+                        if user.contact == '':
+                            data = question['ask']
+                            got_a_question = True
+                            
+                    user.waiting_for = field
+                    user.save()
+                    if got_a_question:
+                        break
                         
-                    count = user.count
-                    
-                    if count == 0:
-                        data = 'Please provide your first name.'
-                        user.count = 1
-                        user.save()
-                    if count == 1:
-                        user.first_name = message
-                        data = 'Please provide your last name.'
-                        user.count = 2
-                        user.save()
-                    if count ==2:
-                        user.last_name = message
-                        data = f'hello {user.first_name}, please provide your mail id?'
-                        user.count = 3
-                        user.save()
-                    if count ==3:
-                        if not str(message).find('@') == -1:
-                            user.email = message
-                            user.count = 4
-                            user.save()
-                            data = 'Thank you for your patients. We will contact you as soon as possible ?'
-                        else:
-                            data = 'we are sry, please provide a valid mail id.'
-                    if count == 4:
-                        data = 'We already have the neccessary details to connect with you.You are on our waiting list. Please type "edit", to change your details.'
-                # else:
-                #     data = 'You should type start to continue.'
-        send(data)
+
+                send(data)
+                return HttpResponse('bot is running')
         return HttpResponse('bot is running')
     else:
         return HttpResponse("bot is running")

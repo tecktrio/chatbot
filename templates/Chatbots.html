@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbots</title>
+</head>
+<style>
+    .bot_container{
+        background-color: rgb(255, 255, 255);
+        max-width: 50%;
+        border: 1px solid black;
+        border-radius: 10px;
+    }
+    .bot_container p{
+        width: 90vw;
+        display: flex;
+        justify-content: center;
+    }
+    .header{
+        display: flex;
+        justify-content: space-around;
+    }
+    .row{
+        display: flex;
+        justify-content: space-evenly;
+    }
+    button{
+        padding: 10px;
+        background-color: rgb(16, 148, 219);
+        color: white;
+    }
+  
+    .container{
+        display: flex;
+        justify-content: center;
+    }
+</style>
+<body>
+    <div class="header">
+        <h4>Listing your bots</h4>
+        <a href="/bot_registration"><button>Register Your New Bot</button></a>
+    </div>
+    <div class="container">
+       
+        
+        <div class="bot_container">
+            <div>
+            <div class="row">
+                <p>ID</p>
+                <p>NAME</p>
+                <p>TASK</p>
+                <p>NUMBER</p>
+                <p>STATUS</p>
+            </div>
+            {% for bot in bots %}
+            <hr>
+            <div class="row">
+                <p>{{bot.id}}</p>
+                <p>{{bot.Bot_name}}</p>
+                <p>{{bot.Bot_Task}}</p>
+                <p>{{bot.Bot_contact}}</p>
+                <p>{{bot.Bot_Status}}</p>
+            </div>
+            {% endfor %}
+     
+        </div>
+    </div>
+   
+</body>
+</html>
