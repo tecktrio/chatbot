@@ -40,7 +40,7 @@ def bot_registration(request):
                 if not BotCollection.objects.filter(Bot_name=bot_name).exists():
                     new_bot =BotCollection.objects.create(admin_email=admin.email,Bot_contact = bot_contact,Bot_name = bot_name, Bot_Task = bot_task)
                     new_bot.save()
-                    return render(request,'bot_registration.html',{'success':'Bot registered successfully. you can now go to dashboard.'})
+                    return redirect(chatbots)
                 else:
                     return render(request,'bot_registration.html',{'error':'Bot name is already taken'})
             else:
@@ -48,6 +48,20 @@ def bot_registration(request):
         else:
             return render(request,'bot_registration.html',{'error':'provide a valid bot number'})
     return render(request, 'bot_registration.html')
+
+def Change_Bot_Status(request,contact):
+    Bot_contact = contact
+    try:
+        bot = BotCollection.objects.get(Bot_contact=Bot_contact)
+        
+        if bot.Bot_Status == 'running':
+            bot.Bot_Status = 'not_running'
+        else:
+            bot.Bot_Status = 'running'
+        bot.save()
+    except:
+        pass
+    return redirect(chatbots)
     
 def check_user_login_status(request):
     if 'widecity_chatbot_email' in request.COOKIES:
@@ -143,10 +157,11 @@ def Dashboard(request):
         city = ''
         country = ''
         new_customers = ''
-        duration = ''
-        total_customers = admin.total_customers
-        total_contact = admin.total_contact
-        total_mail_id = admin.total_mail_id
+        duration = 'last 16 days'
+        user = Users.objects.filter(admin_email=admin.email)
+        total_customers = user.count()
+        total_contact = user.count()
+        total_mail_id = user.count()
         menus = [{
             'title':'DashBoard',
             'link':'dashboard'
@@ -193,8 +208,17 @@ def Dashboard(request):
 def chatbots(request):
     admin_email = get_admin(request).email
     bots = BotCollection.objects.filter(admin_email=admin_email)
+    menus = [{
+    'title':'DashBoard',
+    'link':'dashboard'
+    },
+    {
+    'title':'Chatbots',
+    'link':'chatbots'
+    }]
     context={
-        'bots':bots
+        'bots':bots,
+        'menus':menus
         }
     return render(request,'Chatbots.html',context)
 
@@ -237,7 +261,11 @@ def whatsupbot(request):
         # intelligent, pretrained , this can be changed from admin dashboard
         if BotCollection.objects.filter(Bot_contact=bot_number).exists():
             bot = BotCollection.objects.get(Bot_contact=bot_number)
-            brain = bot.Bot_Task
+            if bot.Bot_Status == 'running':
+                brain = bot.Bot_Task
+            else:
+                send('I am very sorry, Currently my services are not available. Please contact the admin')
+                return HttpResponse('bot is not running')
         else:
             send('I am not registered to any companies. Please register my number at bots.widecity.in if you are my owner.')
             return HttpResponse('bot is running')
@@ -338,7 +366,6 @@ class webbot(APIView):
     @csrf_exempt
     def post(self,request):
         
-
         data = json.load(request)
         key = data.get('key')
         value = data.get('value')

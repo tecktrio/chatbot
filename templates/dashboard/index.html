@@ -373,7 +373,7 @@
             </div>
             <div class="col-md-6 grid-margin transparent">
               <div class="row">
-                <div class="col-md-6 mb-4 stretch-card transparent">
+                <!-- <div class="col-md-6 mb-4 stretch-card transparent">
                   <div class="card card-tale">
                     <div class="card-body">
                       <p class="mb-4">New Customers</p>
@@ -381,13 +381,14 @@
                       <p>{{duration}}</p>
                     </div>
                   </div>
-                </div>
+                </div> -->
                 <div class="col-md-6 mb-4 stretch-card transparent">
                   <div class="card card-dark-blue">
                     <div class="card-body">
                       <p class="mb-4">Total Customers</p>
                       <p class="fs-30 mb-2">{{total_customers}}</p>
-                      <!-- <p>22.00% (30 days)</p> -->
+                      <p>Total number of your customers</p>
+                      <p style="font-size: 10px;color: rgb(201, 197, 197);">As the number of customers increase the leads also increases</p>
                     </div>
                   </div>
                 </div>
@@ -398,7 +399,8 @@
                     <div class="card-body">
                       <p class="mb-4">Total Contact</p>
                       <p class="fs-30 mb-2">{{total_contact}}</p>
-                      <!-- <p>2.00% (30 days)</p> -->
+                      <p >Number of customers who have provided their number</p>
+                      <p style="font-size: 10px;color: rgb(201, 197, 197);"> You can contact to this numbers. </p>
                     </div>
                   </div>
                 </div>
@@ -407,7 +409,8 @@
                     <div class="card-body">
                       <p class="mb-4">Total Mail Id</p>
                       <p class="fs-30 mb-2">{{total_mail_id}}</p>
-                      <!-- <p>0.22% (30 days)</p> -->
+                      <p>Number of customers who have provided their mail id</p>
+                      <p style="font-size: 10px;color: rgb(201, 197, 197);"> You can mail to this id. </p>
                     </div>
                   </div>
                 </div>
@@ -465,8 +468,15 @@
             <div class="col-md-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <p class="card-title">Customer Details</p>
-                  <button style="background-color: rgb(4, 127, 235);padding: 10px;border-radius: 10px;margin: 10px;border: gray;"><a href="/download_excel" style="color: white;text-decoration: none;">Download</a></button>
+                  <h3>Customer Details</h3>
+                  <p style="font-size: 12px;color: rgb(121, 116, 116);">Here is the list of customer details that have been collected by your bots</p><br>
+                  <h4>Dowload the customer data in Excel format</h4>
+                  <p  style="font-size: 12px;color: rgb(121, 116, 116);">Use the button below to Download, Please download atleast in a week to keep a backup of your data</p>
+                  <button style="background-color: rgb(7, 109, 198);padding: 5px 20px;border-radius: 5px;margin: 10px;border: gray;"><a href="/download_excel" style="color: white;text-decoration: none;">Download</a></button>
+                  <div style="margin: 40px 0px;">
+                    <h4>Table of Customers collected by your bot</h4>
+                    <p>use can observe the customer name, email, contact and other details. </p>  
+                  </div>
                   <div class="row">
                     <div class="col-12">
                       <div class="table-responsive">
@@ -486,20 +496,25 @@
                           <tbody  style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;font-weight: normal;color: rgb(82, 77, 77);">
                             {% for user in Users %}
                             <tr>
-                              <th style="padding: 10px;">{{user.id}}</th>
-                              <th>{{user.first_name}}</th>
-                              <th>{{user.last_name}}</th>
-                              <th>{{user.email}}</th>
-                              <th>{{user.contact}}</th>
-                              <th>-</th>
-                              <th>-</th>
+                              <td>{{user.id}}</td>
+                              <td>{{user.first_name}}</td>
+                              <td>{{user.last_name}}</td>
+                              <td>{{user.email}}</td>
+                              <td>{{user.contact}}</td>
+                              <td><button style="padding: 10px;margin: 15px;"></button></td>
+                              <td>-</td>
                             </tr>
                             {% endfor %}
                           </tbody>
                       </table>
                       </div>
                     </div>
-                  </div>
+                    <div style="margin: 20px;background-color: rgba(141, 140, 138, 0.8);padding: 20px;width: 100%;border-radius: 10px;color: white;">
+                      <h4>Updates</h4>
+                    <p>currently we are updating entire page. please hold on tight until we get stable. You can contact at <a href="mailto:widecity.official@gmail.com">Widecity Center</a> for help</p>
+                 
+                    </div>
+                     </div>
                   </div>
                 </div>
               </div>
