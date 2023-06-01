@@ -383,10 +383,10 @@
                 <div class="card-body">
                     <div class="header">
                         <!-- <h4>Listing your bots</h4> -->
-                        <a href="/bot_registration"><button>Register Your New Bot</button></a>
+                        <a href="/new_bot_template"><button>Add New Template</button></a>
                     </div>
-                  <p class="card-title">Bot Details</p>
-                  <p>Listing the bots that are in your account</p>
+                  <p class="card-title">Templates</p>
+                  <p>Listing the templates that are in your account</p>
                   <!-- <button style="background-color: rgb(4, 127, 235);padding: 10px;border-radius: 10px;margin: 10px;border: gray;"><a href="/download_excel" style="color: white;text-decoration: none;">Download</a></button> -->
                   <div class="row">
                     <div class="col-12">
@@ -396,33 +396,19 @@
                           <thead>
                             <tr>
                               <th>Id</th>
-                              <th>BOT NAME</th>
-                              <th>TASK ASSIGNED</th>
-                              <th>BOT NUMBER</th>
                               <th>TEMPLATE NAME</th>
-                              <th>BOT STATUS</th>
+                              <th>TEMPLATE STATUS</th>
+                              <th></th>
                             </tr>
 
                           </thead>
                           <tbody>
                             <br>
-                            {% for bot in bots %}
+                            {% for template in templates %}
                             <tr>
-                              <td>{{bot.id}}</td>
-                              <td>{{bot.Bot_name}}</td>
-                              <td>{{bot.Bot_Task}}</td>
-                              <td>{{bot.Bot_contact}}</td>
-                              <td>{{bot.Template_name}}</td>
-                              <td>
-                                {% if bot.Bot_Status == 'running' %}
-                                <button class="status_success">Running</button>
-                                <a href="change_bot_status/{{bot.Bot_contact}}"><p>click to disable</p></a>
-                                {% else %}
-                                <button class="status_failed">Disabled</button>
-                                <a href="change_bot_status/{{bot.Bot_contact}}"><p>click to enable</p></a>
-                                {% endif %}
-                            </td>
-                            
+                              <td>{{template.template_name}}</td>
+                              <td>{{template.template_status}}</td>
+                              <td><button>Edit</button></td>
                             </tr>
                             {% endfor %}
                           </tbody>

@@ -12,7 +12,7 @@ from twilio.rest import Client
 from rest_framework.views import APIView
 
 from .serializers import User_Serializer
-from .models import Admins, BotCollection, Users
+from .models import Admins, BotCollection, Templates_v1, Users
 from mybot.settings import TWILIO_ACCOUNT_SID, TWILIO_TOKEN
 from .chatbot_keywords import questions_for_data_collection_task
 from django.views.decorators.csrf import csrf_exempt
@@ -48,6 +48,37 @@ def bot_registration(request):
         else:
             return render(request,'bot_registration.html',{'error':'provide a valid bot number'})
     return render(request, 'bot_registration.html')
+
+
+def     templates(request):
+    menus = [{
+    'title':'DashBoard',
+    'link':'dashboard'
+    },
+    {
+    'title':'Templates',
+    'link':'templates'
+    },
+    {
+    'title':'Chatbots',
+    'link':'chatbots'
+    }]
+
+    templates = Templates_v1.objects.all()
+    
+    print('templates',templates)
+    context = {
+        'menus':menus,
+        'templates':templates
+    }
+    return render(request, 'bot_templates.html',context)
+
+def new_bot_tempates(request):
+    fields = Templates_v1.objects.all()
+    context={
+        'fields' : fields
+    }
+    return render(request,'new_bot_template.html',context)
 
 def Change_Bot_Status(request,contact):
     Bot_contact = contact
@@ -165,6 +196,9 @@ def Dashboard(request):
         menus = [{
             'title':'DashBoard',
             'link':'dashboard'
+            },{
+            'title':'Templates',
+            'link':'templates'
             },
             {
             'title':'Chatbots',
@@ -211,6 +245,10 @@ def chatbots(request):
     menus = [{
     'title':'DashBoard',
     'link':'dashboard'
+    },
+    {
+    'title':'Templates',
+    'link':'templates'
     },
     {
     'title':'Chatbots',
@@ -278,16 +316,16 @@ def whatsupbot(request):
             data = getIntelligent(message)
             
         elif brain=='collect_data':
+            # getting the admin_details of the bot
+            admin_email = BotCollection.objects.get(Bot_contact=bot_number).admin_email
+            
             '''checking whether the user is new to the admin'''
-            if not Users.objects.filter(contact=From[9:]).exists():
+            if not Users.objects.filter(contact=From[9:],admin_email=admin_email).exists():
                 '''New User'''
                 # creating the user account
                 new_user = Users.objects.create(contact=From[9:])
                 print('New user, Account created successfully.')
-                
-                # getting the admin_details of the bot
-                admin_email = BotCollection.objects.get(Bot_contact=bot_number).admin_email
-                
+            
                 # adding this user account to the admin data
                 new_user.admin_email = admin_email
                 new_user.save()
@@ -298,7 +336,7 @@ def whatsupbot(request):
             else:
                 '''existing user'''
                 # fetching the user information from database
-                user = Users.objects.get(contact=From[9:])
+                user = Users.objects.get(contact=From[9:],admin_email=admin_email)
                          
                 # waiting for response from the user is the bot already asked one
                 if user.waiting_for == 'first_name':

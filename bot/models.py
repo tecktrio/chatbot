@@ -38,3 +38,18 @@ class BotCollection(models.Model):
     
     def __str__(self) -> str:
         return self.admin_email
+    
+
+class Templates_v1(models.Model):
+    template_name = models.CharField(max_length=100,default='')
+    template_status = models.CharField(max_length=100,default='')
+    first_name = models.CharField(max_length=50,choices=(('enable','enable'),('disable','disable')))
+    last_name = models.CharField(max_length=50,choices=(('enable','enable'),('disable','disable')))
+    contact = models.CharField(max_length=50,choices=(('enable','enable'),('disable','disable')))
+    email = models.CharField(max_length=50,choices=(('enable','enable'),('disable','disable')))
+    quetion_1 = models.CharField(max_length=50,choices=(('enable','enable'),('disable','disable')))
+    quetion_2 = models.CharField(max_length=50,choices=(('enable','enable'),('disable','disable')))
+    quetion_3 = models.CharField(max_length=50,choices=(('enable','enable'),('disable','disable')))
+    quetion_4 = models.CharField(max_length=50,choices=(('enable','enable'),('disable','disable')))
+    quetion_5 = models.CharField(max_length=50,choices=(('enable','enable'),('disable','disable')))
+    

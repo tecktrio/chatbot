@@ -73,7 +73,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mybot.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -81,7 +80,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME':'widy',
-        # 'USER':'root',
+        'USER':'root',
         'USER':'widecity',
         # 'PASSWORD':'1234'
         'PASSWORD':'secure@2022'
