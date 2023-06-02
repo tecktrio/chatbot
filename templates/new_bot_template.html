@@ -10,11 +10,11 @@
     .container{
         display: flex;
         justify-content: center;
-        background-size: cover;
-        background-image: url('https://th.bing.com/th/id/R.9475fb4ecf827c914badee8a0788eec1?rik=48mG5m3OsRZeGg&riu=http%3a%2f%2fi.imgur.com%2fEPBdxPL.jpg&ehk=Wyofd1kCKxbWf7BHhrwKCRZienfXpL4J6YQvlhZAI%2bo%3d&risl=&pid=ImgRaw&r=0');
+        /* background-size: cover;
+        background-image: url('https://th.bing.com/th/id/R.9475fb4ecf827c914badee8a0788eec1?rik=48mG5m3OsRZeGg&riu=http%3a%2f%2fi.imgur.com%2fEPBdxPL.jpg&ehk=Wyofd1kCKxbWf7BHhrwKCRZienfXpL4J6YQvlhZAI%2bo%3d&risl=&pid=ImgRaw&r=0'); */
     }
     .form{
-        margin-top: 10%;
+        margin-top: 2%;
         width: 50%;
         /* background-color: white;
         border: 1px solid black; */
@@ -75,27 +75,50 @@
         margin: 0px 10px;
         
     }
-    .edit_icon {
-        width: 100%;
-        /* padding: 5px; */
-    }
-    .edit_icon{
-        display: flex;
-
-        
-    }
-    .q_non_edit{
-        /* display: none; */
-
-    }
-    .q_edit input{
-        padding: 5px 15px;
+   
+    .enable{
+        background-color: rgb(5, 120, 220);
+        padding: 10px;
+        border-radius: 10px;
+        width: 100px;
+        margin: 10px;
+        /* background-color: rgb(17, 134, 230); */
+        color: white;
+        padding: 10px;
+        border: 1px white;
         border-radius: 5px;
-
     }
-    .q_edit{
-        display: none;
-
+    .enable p{
+        font-size: 10px;
+        padding: 0px;
+        margin: 0px;
+        color: rgb(222, 218, 218);
+    }
+    .enable:hover{
+        background-color: rgb(12, 60, 157);
+        cursor: pointer;
+    }
+    .disable{
+        background-color: rgb(223, 30, 30);
+        padding: 10px;
+        border-radius: 10px;
+        width: 100px;
+        margin: 10px;
+        /* background-color: rgb(17, 134, 230); */
+        color: white;
+        padding: 10px;
+        border: 1px white;
+        border-radius: 5px;
+    }
+    .disable p{
+        font-size: 10px;
+        padding: 0px;
+        margin: 0px;
+        color: rgb(222, 218, 218);
+    }
+    .disable:hover{
+        background-color: rgb(178, 14, 14);
+        cursor: pointer;
     }
     @media screen and (max-width: 600px) {
         .form{
@@ -105,6 +128,67 @@
         }
 }
 </style>
+<style>
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 28px;
+    }
+    
+    .switch input { 
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+    
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+    
+    input:focus + .slider {
+      box-shadow: 0 0 1px #2196F3;
+    }
+    
+    input:checked + .slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+    }
+    
+    /* Rounded sliders */
+    .slider.round {
+      border-radius: 34px;
+    }
+    
+    .slider.round:before {
+      border-radius: 50%;
+    }
+    </style>
 <body class="container">
 <div class="form">
 
@@ -118,26 +202,93 @@
         <div>
 
             <!-- //////////// -->
-            <div>
+            <form action="/edit_bot_template/{{fields.id}}" method="POST">
+                <div class="main_container">
+                    <label>Template Name</label>
+                    <input style="padding: 10px;border-radius: 10px;width: 20%;" value="{{fields.template_name}}" name="template_name">
+                </div>
+
                 <div class="main_container">
                     <h4>First Name</h4>
-                    <button>Enabled</button>
-                </div>
-                <div style="margin: 5px;">
-                    <div class="edit_icon q_non_edit" id="q_non_edit">
-                        <p class="main_container_p" >what is your first name?</p>
-                        <img src="" alt="edit" onclick="document.getElementById('q_non_edit').style.display='none';document.getElementById('q_edit').style.display='flex';" >
+                    <label class="switch">
+                    {% if fields.first_name == 'enable' %}
+                    <input type="checkbox" checked name="first_name" >
+                    {% else %}
+                    <input type="checkbox" name="first_name" >
+                    {% endif %}
+                    <span class="slider round"></span>
+                    </label>            
                     </div>
-                    <div class="edit_icon ">
-                    <div class="edit_icon q_edit" id="q_edit">
-                        <input type="text" value='what is your first name?'>
-                        <button style="margin: 0px 5px;" onclick="document.getElementById('q_non_edit').style.display='flex';document.getElementById('q_edit').style.display='none';">Save</button>
+                    <div style="margin: 5px;">
+                    <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="first_name_q">{{fields.first_name_q}}</textarea>
                     </div>
-                </div>
-                
-            </div>
+
+                    <div class="main_container">
+                    <h4>Last Name</h4>
+                    <label class="switch">
+                    {% if fields.last_name == 'enable' %}
+                    <input type="checkbox" checked name="last_name" >
+                    {% else %}
+                    <input type="checkbox" name="last_name" >
+                    {% endif %}
+                    <span class="slider round"></span>
+                    </label>            
+                    </div>
+                    <div style="margin: 5px;">
+                    <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="last_name_q">{{fields.last_name_q}}</textarea>
+                    </div>
+
+                    <div class="main_container">
+                    <h4>Contact</h4>
+                    <label class="switch">
+                    {% if fields.contact == 'enable' %}
+                    <input type="checkbox" checked name="contact" >
+                    {% else %}
+                    <input type="checkbox" name="contact" >
+                    {% endif %}
+                    <span class="slider round"></span>
+                    </label>            
+                    </div>
+                    <div style="margin: 5px;">
+                    <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="contact_q">{{fields.contact_q}}</textarea>
+                    </div>
+
+                    <div class="main_container">
+                    <h4>Email ID</h4>
+                    <label class="switch">
+                    {% if fields.email == 'enable' %}
+                    <input type="checkbox" checked name="email" >
+                    {% else %}
+                    <input type="checkbox" name="email" >
+                    {% endif %}
+                    <span class="slider round"></span>
+                    </label>            
+                    </div>
+                    <div style="margin: 5px;">
+                    <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="email_q">{{fields.email_q}}</textarea>
+                    </div>
+
+                    <div class="main_container">
+                    <h4>Email ID</h4>
+                    <label class="switch">
+                    {% if fields.email == 'enable' %}
+                    <input type="checkbox" checked name="email" >
+                    {% else %}
+                    <input type="checkbox" name="email" >
+                    {% endif %}
+                    <span class="slider round"></span>
+                    </label>            
+                    </div>
+                    <div style="margin: 5px;">
+                    <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="email_q">{{fields.email_q}}</textarea>
+                    </div>
+
+
+                <button type="submit">submit</button>
+            </form>
             <hr>
-             </div>
+        </div>
+            
            <!-- //////////// -->
            
 </div>

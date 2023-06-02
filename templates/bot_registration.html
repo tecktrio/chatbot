@@ -87,10 +87,15 @@
         </div>
         <div class="input">
             <label>Bot Task</label>
+            {% if templates %}
             <select name="bot_task">
-                <option selected>collect_data</option>
-                <option>intelligent_bot</option>
+                {% for template in templates %}
+                <option>{{template.template_name}}</option>
+                {% endfor %}
             </select>
+            {% else %}
+            <p>Please add alteast one template over <a href="/templates">here</a></p>
+            {% endif %}
         </div>
        
         

@@ -412,7 +412,14 @@
                               <td>{{bot.Bot_name}}</td>
                               <td>{{bot.Bot_Task}}</td>
                               <td>{{bot.Bot_contact}}</td>
-                              <td>{{bot.Template_name}}</td>
+                              <td><select>
+                                <option selected>{{bot.Template_name}}</option>
+                                {% for template in template_list %}
+                                <option>{{template.template_name}}</option>
+                                {% endfor %}
+                              </select>
+                                
+                              </td>
                               <td>
                                 {% if bot.Bot_Status == 'running' %}
                                 <button class="status_success">Running</button>

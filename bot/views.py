@@ -11,6 +11,8 @@ from django.shortcuts import redirect, render
 from twilio.rest import Client
 from rest_framework.views import APIView
 
+from . import reply_generator_model_1
+
 from .serializers import User_Serializer
 from .models import Admins, BotCollection, Templates_v1, Users
 from mybot.settings import TWILIO_ACCOUNT_SID, TWILIO_TOKEN
@@ -30,15 +32,15 @@ def Bots(request):
 
 @csrf_exempt
 def bot_registration(request):
+    admin =  get_admin(request)
     if request.method == 'POST':
-        admin =  get_admin(request)
         bot_contact = request.POST.get('bot_contact')
         bot_name = request.POST.get('bot_name')
-        bot_task = request.POST.get('bot_task')
+        bot_template = request.POST.get('bot_task')
         if bot_contact != '':
             if not BotCollection.objects.filter(Bot_contact=bot_contact).exists():
                 if not BotCollection.objects.filter(Bot_name=bot_name).exists():
-                    new_bot =BotCollection.objects.create(admin_email=admin.email,Bot_contact = bot_contact,Bot_name = bot_name, Bot_Task = bot_task)
+                    new_bot =BotCollection.objects.create(admin_email=admin.email,Bot_contact = bot_contact,Bot_name = bot_name, Bot_Template = bot_template)
                     new_bot.save()
                     return redirect(chatbots)
                 else:
@@ -47,10 +49,17 @@ def bot_registration(request):
                 return render(request,'bot_registration.html',{'error':'This bot is already registered.please check your bot list'})        
         else:
             return render(request,'bot_registration.html',{'error':'provide a valid bot number'})
-    return render(request, 'bot_registration.html')
+        
+    print(admin.email)
+    templates = Templates_v1.objects.filter(admin_email=admin.email)
+    print(templates)
+    context = {
+        'templates':templates
+    }
+    return render(request, 'bot_registration.html',context)
 
 
-def     templates(request):
+def  templates(request):
     menus = [{
     'title':'DashBoard',
     'link':'dashboard'
@@ -74,11 +83,65 @@ def     templates(request):
     return render(request, 'bot_templates.html',context)
 
 def new_bot_tempates(request):
-    fields = Templates_v1.objects.all()
+    admin = get_admin(request)
+    template_name = random.randint(100000,999999)
+    while Templates_v1.objects.filter(admin_email=admin.email, template_name=template_name).exists():
+            template_name = random.randint(100000,999999)
+
+    new = Templates_v1.objects.create(admin_email = admin.email, template_name=template_name)
+    new.save()
+    
+    fields = Templates_v1.objects.get(id=new.id)
+
     context={
         'fields' : fields
     }
     return render(request,'new_bot_template.html',context)
+
+@csrf_exempt
+def edit_bot_tempates(request,id):  
+    if request.method == 'POST':
+
+        first_name = request.POST.get('first_name')
+        first_name_q = request.POST.get('first_name_q')
+        last_name = request.POST.get('last_name')
+        last_name_q = request.POST.get('last_name_q')
+        contact = request.POST.get('contact')
+        contact_q = request.POST.get('contact_q')        
+        email = request.POST.get('email')
+        email_q = request.POST.get('email_q')
+        template_name = request.POST.get('template_name')
+        
+        template = Templates_v1.objects.get(id=id)  
+              
+        if str(first_name).strip() == 'on': template.first_name = 'enable'
+        else: template.first_name = 'disable' 
+                     
+        if str(last_name).strip() == 'on': template.last_name = 'enable'
+        else: template.last_name = 'disable'
+                     
+        if str(contact).strip() == 'on': template.contact = 'enable'
+        else: template.contact = 'disable'
+
+                     
+        if str(email).strip() == 'on': template.email = 'enable'
+        else: template.email = 'disable'
+
+        template.first_name_q = first_name_q
+        template.last_name_q = last_name_q
+        template.contact_q = contact_q
+        template.email_q = email_q
+        template.template_name = template_name
+        print(template_name)
+        
+        template.save()
+        return redirect(templates)
+    template = Templates_v1.objects.get(id=id)
+    context={
+        'fields' : template
+    }
+    return render(request,'new_bot_template.html',context)
+
 
 def Change_Bot_Status(request,contact):
     Bot_contact = contact
@@ -242,6 +305,8 @@ def Dashboard(request):
 def chatbots(request):
     admin_email = get_admin(request).email
     bots = BotCollection.objects.filter(admin_email=admin_email)
+    template_list = Templates_v1.objects.filter(admin_email=admin_email)
+    print(template_list)
     menus = [{
     'title':'DashBoard',
     'link':'dashboard'
@@ -256,7 +321,8 @@ def chatbots(request):
     }]
     context={
         'bots':bots,
-        'menus':menus
+        'menus':menus,
+        'template_list':template_list
         }
     return render(request,'Chatbots.html',context)
 
@@ -268,39 +334,37 @@ def whatsupbot(request):
     # handles the post request comming from twilio
     '''This will only work if the access token and accound id is valid. '''
     if request.method == 'POST':
-        # setting up global variables
-        global waiting_for
         # gathering the neccessary fields from the post request
         message = request.POST.get('Body')
-        name = request.POST.get('ProfileName')
-        From = request.POST.get('From')
-        To = request.POST.get('To')
+        # name = request.POST.get('ProfileName')
+        user_number = request.POST.get('From')
+        bot_number_with_platform = request.POST.get('To')
         
         # filtering the data for processing
-        message_as_list = str(message).lower().split(' ')
-        bot_number = To[9:]
-                
-        # trying to make the incomming message to lower case for enabling non case sensitive
+        bot_number = bot_number_with_platform[9:]
+        
+        # trying to make the incomming message to lower case and removing the space around it as message filter
         try:
-            message = str(message).lower()
+            message = str(message).lower().strip()
         except:
             pass
 
-        # this method will send the message back to the user/twilio
+        # requesting the twilio to send message data from bot_number_with_platform to user_number
         def send(data):
+            print('///////////',bot_number_with_platform,user_number)
             client.messages.create(
-                                    from_=f'whatsapp:{bot_number}',
+                                    from_=bot_number_with_platform,
                                     body=data,
-                                    to=From
+                                    to=user_number
                                 )
 
         
-        # Verifying the bot and choosing the type of brain
+        # Verifying the bot registration and choosing the type of brain
         # intelligent, pretrained , this can be changed from admin dashboard
         if BotCollection.objects.filter(Bot_contact=bot_number).exists():
             bot = BotCollection.objects.get(Bot_contact=bot_number)
             if bot.Bot_Status == 'running':
-                brain = bot.Bot_Task
+                brain_model = 'pretrained'
             else:
                 send('I am very sorry, Currently my services are not available. Please contact the admin')
                 return HttpResponse('bot is not running')
@@ -310,91 +374,55 @@ def whatsupbot(request):
             
         data = 'sry, i am not able to recognize you. my mind is blank.'
         
+        
         # setting up the response system according to the brain
-        if brain=='intelligent':
+        if brain_model=='intelligent':
             # forwarding the control to intelligent system for response
             data = getIntelligent(message)
             
-        elif brain=='collect_data':
-            # getting the admin_details of the bot
-            admin_email = BotCollection.objects.get(Bot_contact=bot_number).admin_email
+        elif brain_model=='pretrained':
             
-            '''checking whether the user is new to the admin'''
-            if not Users.objects.filter(contact=From[9:],admin_email=admin_email).exists():
+            # ///////////  FILTERING THE USER FROM 10000 OF REQUEST /////
+            # ////////////////////////////////////////////////////////////
+            
+            # GETTING THE ADMIN DETAILS TO WHOM THE BOT BELONGS TO
+            print('FETCHING THE ADMIN EMAIL FROM BOTCOLLECTION')
+            admin_email = BotCollection.objects.get(Bot_contact=bot_number).admin_email
+            print('ADMIN EMAIL :',admin_email)
+            
+            # Fetching the template that this particular bot use
+            print('FETCHING THE BOT TEMPLATE')
+            template_name  = bot.Bot_Template
+            try:
+                bot_template = Templates_v1.objects.get(template_name = template_name,admin_email=admin_email)
+            except:
+                send('I am so sorry, i dont know what should i say.Please contact my owner.')
+                return HttpResponse('bot does not have a response system')
+            print('BOT TEMPLATE :',bot_template.template_name)
+            
+            # CHECKING WHETHER THE USER IS NEW TO THE ADMIN
+            if not Users.objects.filter(contact=bot_number,admin_email=admin_email).exists():
                 '''New User'''
                 # creating the user account
-                new_user = Users.objects.create(contact=From[9:])
+                new_user = Users.objects.create(contact=bot_number,admin_email=admin_email)
                 print('New user, Account created successfully.')
             
-                # adding this user account to the admin data
-                new_user.admin_email = admin_email
                 new_user.save()
 
-                data = 'Hi, Seems like new to here. My name is Widy, i can here to assist you. I am here with a good news. I have opened an account for you just now."'
-                send(data)
+                reply = bot_template.welcome_message
+                send(reply)
                 whatsupbot(request)
             else:
                 '''existing user'''
                 # fetching the user information from database
-                user = Users.objects.get(contact=From[9:],admin_email=admin_email)
-                         
-                # waiting for response from the user is the bot already asked one
-                if user.waiting_for == 'first_name':
-                    user.first_name = message
-                    waiting_for = ''
-                    user.save()
-                if user.waiting_for == 'last_name':
-                    user.last_name = message
-                    waiting_for = ''
-                    user.save()
-                if user.waiting_for == 'email':
-                    user.email = message
-                    waiting_for = ''
-                    user.save()
-                if user.waiting_for == 'contact':
-                    user.contact = message
-                    waiting_for = ''
-                    user.save()
-                    
-                    
-                # preparing the questions to ask (update from dashboard)
-                questions  = questions_for_data_collection_task
-                
+                user = Users.objects.get(contact=bot_number,admin_email=admin_email)
+
                 # updating the questions to ask
                 '''question are updated based on the question file that can be controlled from dashboard'''
-                for question in questions:
-                    field = question['field']
-                    #  replay if there is nother to ask.
-                    data = 'Thank you, We will contact you soon.'
-                    got_a_question = False
-                    # if first_name required
-                    if 'first_name' == field:
-                        if user.first_name == '':
-                            data = question['ask']
-                            got_a_question = True
-                    # if last_name required
-                    if 'last_name' == field:
-                        if user.last_name == '':
-                            data = question['ask']
-                            got_a_question = True
-                    # if emai is required
-                    if 'email' == field:
-                        if user.email == '':
-                            data = question['ask']
-                            got_a_question = True
-                    #  if contact is required
-                    if 'contact' == field:
-                        if user.contact == '':
-                            data = question['ask']
-                            got_a_question = True
-                            
-                    user.waiting_for = field
-                    user.save()
-                    if got_a_question:
-                        break
-                        
+                user_contact = user.contact
+                replay = reply_generator_model_1(bot_template,user_contact,message,admin_email)                      
 
-                send(data)
+                send(replay)
                 return HttpResponse('bot is running')
         return HttpResponse('bot is running')
     else:
