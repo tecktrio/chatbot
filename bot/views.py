@@ -73,7 +73,8 @@ def  templates(request):
     'link':'chatbots'
     }]
 
-    templates = Templates_v1.objects.all()
+    admin = get_admin(request)
+    templates = Templates_v1.objects.filter(admin_email = admin.email)
     
     print('templates',templates)
     context = {
@@ -99,6 +100,16 @@ def new_bot_tempates(request):
     return render(request,'new_bot_template.html',context)
 
 @csrf_exempt
+def change_bot_template(request):
+    if request.method == 'POST':
+        bot_id = request.POST.get('id')
+        template = request.POST.get('template')
+        bot =  BotCollection.objects.get(id=bot_id)
+        bot.Bot_Template = template
+        bot.save()
+    return redirect(to=chatbots)
+
+@csrf_exempt
 def edit_bot_tempates(request,id):  
     if request.method == 'POST':
 
@@ -111,6 +122,8 @@ def edit_bot_tempates(request,id):
         email = request.POST.get('email')
         email_q = request.POST.get('email_q')
         template_name = request.POST.get('template_name')
+        welcome_message = request.POST.get('welcome_message')
+        end_message = request.POST.get('end_message')
         
         template = Templates_v1.objects.get(id=id)  
               
@@ -132,6 +145,8 @@ def edit_bot_tempates(request,id):
         template.contact_q = contact_q
         template.email_q = email_q
         template.template_name = template_name
+        template.welcome_message = welcome_message
+        template.end_message = end_message
         print(template_name)
         
         template.save()
@@ -351,7 +366,6 @@ def whatsupbot(request):
 
         # requesting the twilio to send message data from bot_number_with_platform to user_number
         def send(data):
-            print('///////////',bot_number_with_platform,user_number)
             client.messages.create(
                                     from_=bot_number_with_platform,
                                     body=data,
@@ -387,7 +401,11 @@ def whatsupbot(request):
             
             # GETTING THE ADMIN DETAILS TO WHOM THE BOT BELONGS TO
             print('FETCHING THE ADMIN EMAIL FROM BOTCOLLECTION')
-            admin_email = BotCollection.objects.get(Bot_contact=bot_number).admin_email
+            try:
+                admin_email = BotCollection.objects.get(Bot_contact=bot_number).admin_email
+            except:
+                reply = 'I am registered to any admin till now. Please tell the admin to register me.'
+                send(reply)
             print('ADMIN EMAIL :',admin_email)
             
             # Fetching the template that this particular bot use
@@ -401,10 +419,10 @@ def whatsupbot(request):
             print('BOT TEMPLATE :',bot_template.template_name)
             
             # CHECKING WHETHER THE USER IS NEW TO THE ADMIN
-            if not Users.objects.filter(contact=bot_number,admin_email=admin_email).exists():
+            if not Users.objects.filter(contact=user_number,admin_email=admin_email).exists():
                 '''New User'''
                 # creating the user account
-                new_user = Users.objects.create(contact=bot_number,admin_email=admin_email)
+                new_user = Users.objects.create(contact=user_number,admin_email=admin_email)
                 print('New user, Account created successfully.')
             
                 new_user.save()
@@ -415,14 +433,15 @@ def whatsupbot(request):
             else:
                 '''existing user'''
                 # fetching the user information from database
-                user = Users.objects.get(contact=bot_number,admin_email=admin_email)
+                user = Users.objects.get(contact=user_number,admin_email=admin_email)
 
                 # updating the questions to ask
                 '''question are updated based on the question file that can be controlled from dashboard'''
                 user_contact = user.contact
-                replay = reply_generator_model_1(bot_template,user_contact,message,admin_email)                      
+                replay = reply_generator_model_1.Reply(bot_template.template_name,user_contact,message,admin_email)                      
 
                 send(replay)
+                print('REPLAY SEND SUCCESSFULLY')
                 return HttpResponse('bot is running')
         return HttpResponse('bot is running')
     else:

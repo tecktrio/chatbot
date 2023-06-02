@@ -65,7 +65,7 @@
     .main_container{
         display: flex;
         justify-content: space-between;
-        margin: 0px 10px;
+        margin: 5px 10px;
         align-items: center;
     }
     .main_container_p{
@@ -207,6 +207,14 @@
                     <label>Template Name</label>
                     <input style="padding: 10px;border-radius: 10px;width: 20%;" value="{{fields.template_name}}" name="template_name">
                 </div>
+                <div class="main_container">
+                    <label>Welcome Message</label>
+                    <input style="padding: 10px;border-radius: 10px;width: 20%;" value="{{fields.welcome_message}}" name="welcome_message">
+                </div>
+                <div class="main_container">
+                    <label>End Message</label>
+                    <input style="padding: 10px;border-radius: 10px;width: 20%;" value="{{fields.end_message}}" name="end_message">
+                </div>
 
                 <div class="main_container">
                     <h4>First Name</h4>
@@ -268,21 +276,7 @@
                     <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="email_q">{{fields.email_q}}</textarea>
                     </div>
 
-                    <div class="main_container">
-                    <h4>Email ID</h4>
-                    <label class="switch">
-                    {% if fields.email == 'enable' %}
-                    <input type="checkbox" checked name="email" >
-                    {% else %}
-                    <input type="checkbox" name="email" >
-                    {% endif %}
-                    <span class="slider round"></span>
-                    </label>            
-                    </div>
-                    <div style="margin: 5px;">
-                    <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="email_q">{{fields.email_q}}</textarea>
-                    </div>
-
+                 
 
                 <button type="submit">submit</button>
             </form>

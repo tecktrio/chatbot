@@ -4,8 +4,9 @@ from django.db import models
 class Users(models.Model):
     admin_email = models.CharField(max_length=100,default='')
     email=models.CharField(max_length=100,default='')
-    contact=models.CharField(max_length=20)
-    count = models.IntegerField(default=-1)#1,2,3
+    contact=models.CharField(max_length=100,default='')
+    bot_contact=models.CharField(max_length=20,default='')
+    # count = models.IntegerField(default=-1)#1,2,3
     first_name=models.CharField(max_length=100,default='')
     last_name=models.CharField(max_length=100,default='')
     waiting_for=models.CharField(max_length=100,default='')
@@ -63,4 +64,5 @@ class Templates_v1(models.Model):
     quetion_5 = models.CharField(max_length=50,default='disable')
     quetion_5_q = models.CharField(max_length=100,default='question 5' )
     welcome_message = models.CharField(max_length=100,default='hi' )
+    end_message = models.CharField(max_length=100,default='thank you' )
     

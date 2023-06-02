@@ -412,12 +412,15 @@
                               <td>{{bot.Bot_name}}</td>
                               <td>{{bot.Bot_Task}}</td>
                               <td>{{bot.Bot_contact}}</td>
-                              <td><select>
-                                <option selected>{{bot.Template_name}}</option>
+                              <form id="form" action="/change_bot_template" method="POST">
+                                <input style="display: none;" name="id" value="{{bot.id}}">
+                              <td><select style="padding: 5px 10px;border-radius: 5px;" onchange="this.form.submit()" name="template">
+                                <option selected>{{bot.Bot_Template}}</option>
                                 {% for template in template_list %}
                                 <option>{{template.template_name}}</option>
                                 {% endfor %}
                               </select>
+                            </form>
                                 
                               </td>
                               <td>

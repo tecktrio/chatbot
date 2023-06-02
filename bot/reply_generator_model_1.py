@@ -1,10 +1,11 @@
  
-from bot.models import Users
+from bot.models import Templates_v1, Users
 
 
-def Reply(bot_template,user_contact,message,admin_email):
-    
+def Reply(bot_template_name,user_contact,message,admin_email):
+    New_Question_Ready = False
     user = Users.objects.get(contact=user_contact,admin_email=admin_email)
+    bot_template = Templates_v1.objects.get(template_name = bot_template_name,admin_email=admin_email)
     # waiting for response from the user is the bot already asked one
     if user.waiting_for == 'first_name':
         user.first_name = message
@@ -20,38 +21,45 @@ def Reply(bot_template,user_contact,message,admin_email):
         user.save()
     
     reply = 'Something happened at my server. its not your problem, its ours. I will get back to you soon'
-    for question in bot_template:
-        #  replay if there is nother to ask.
-        reply = 'Thank you, We will contact you soon.'
-        got_a_question = False
-        # if first_name required
-        if question.first_name == 'enable':
+    #  replay if there is nother to ask.
+    reply = 'Thank you, We will contact you soon.'
+    # if first_name required
+    while True:
+        if bot_template.first_name == 'enable':
             if user.first_name == '':
-                reply = question.first_name_q
+                reply = bot_template.first_name_q
                 user.waiting_for = 'first_name'
+                New_Question_Ready = True
                 user.save()
                 break
         # if last_name required
-        if question.last_name == 'enable':
+        if bot_template.last_name == 'enable':
             if user.last_name == '':
-                reply = question.last_name_q
+                reply = bot_template.last_name_q
                 user.waiting_for = 'last_name'
+                New_Question_Ready = True
                 user.save()
                 break
         # if first_name required
-        if question.contact == 'enable':
+        if bot_template.contact == 'enable':
             if user.contact == '':
-                reply = question.contact_q
+                reply = bot_template.contact_q
                 user.waiting_for = 'contact'
+                New_Question_Ready = True
                 user.save()
                 break
         # if first_name required
-        if question.email == 'enable':
+        if bot_template.email == 'enable':
             if user.email == '':
-                reply = question.email_q
+                reply = bot_template.email_q
                 user.waiting_for = 'email'
+                New_Question_Ready = True
                 user.save()
                 break
+            
+        if New_Question_Ready == False:
+            reply = bot_template.end_message
+            break
         # if first_name required
         # if question.quetion_1 == 'enable':
         #     if user.quetion_1 == '':
@@ -59,9 +67,5 @@ def Reply(bot_template,user_contact,message,admin_email):
         #         user.waiting_for = 'question_1'
         #         user.save()
         #         break
-
-    
-
- 
         
     return reply
