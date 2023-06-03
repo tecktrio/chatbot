@@ -3,20 +3,23 @@
 # printing the result
 
 
-questions_for_data_collection_task  = [
-    {
-        'ask':'please provide your first name?',
-        'field':'first_name'
-    },
-    {
-        'ask':'what is your last name ?',
-        'field':'last_name'
-    },
-    {
-        'ask':'what is your email?',
-        'field':'email'
-    }
+welcome_elements = [
+    'next_line',
+    'media'
 ]
+end_elements = [
+    'first_name',
+    'last_name',
+    'contact',
+    'email',
+    'next_line',
+    'media'
+]
+confirmation_elements=[
+    'next_line',
+    'media'
+]
+edit_message = 'please confirm your details. if they are right please type yes or y, Type the number before your data if you want to edit it.'
 
 do_not_understand =[
     'Sorry, i am not able to predict what is your exact need from amal. please contact to 9946658045.',

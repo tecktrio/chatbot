@@ -16,7 +16,7 @@ from . import reply_generator_model_1
 from .serializers import User_Serializer
 from .models import Admins, BotCollection, Templates_v1, Users
 from mybot.settings import TWILIO_ACCOUNT_SID, TWILIO_TOKEN
-from .chatbot_keywords import questions_for_data_collection_task
+from . import chatbot_keywords as elements
 from django.views.decorators.csrf import csrf_exempt
 from .intelligence import getIntelligent
 # Create your views here.
@@ -93,9 +93,14 @@ def new_bot_tempates(request):
     new.save()
     
     fields = Templates_v1.objects.get(id=new.id)
-
+    end_elements = elements.end_elements
+    welcome_elements = elements.welcome_elements
+    confirmation_elements = elements.confirmation_elements
     context={
-        'fields' : fields
+        'fields' : fields,
+        'end_elements':end_elements,
+        'welcome_elements':welcome_elements,
+        'confirmation_elements':confirmation_elements
     }
     return render(request,'new_bot_template.html',context)
 
@@ -124,6 +129,16 @@ def edit_bot_tempates(request,id):
         template_name = request.POST.get('template_name')
         welcome_message = request.POST.get('welcome_message')
         end_message = request.POST.get('end_message')
+        queston_1 = request.POST.get('queston_1')
+        queston_2 = request.POST.get('queston_2')
+        queston_3 = request.POST.get('queston_3')
+        queston_4 = request.POST.get('queston_4')
+        queston_5 = request.POST.get('queston_5')
+        queston_1_q = request.POST.get('queston_1_q')
+        queston_2_q = request.POST.get('queston_2_q')
+        queston_3_q = request.POST.get('queston_3_q')
+        queston_4_q = request.POST.get('queston_4_q')
+        queston_5_q = request.POST.get('queston_5_q')
         
         template = Templates_v1.objects.get(id=id)  
               
@@ -136,9 +151,23 @@ def edit_bot_tempates(request,id):
         if str(contact).strip() == 'on': template.contact = 'enable'
         else: template.contact = 'disable'
 
-                     
         if str(email).strip() == 'on': template.email = 'enable'
-        else: template.email = 'disable'
+        else: template.email = 'disable'  
+                    
+        if str(queston_1).strip() == 'on': template.queston_1 = 'enable'
+        else: template.queston_1 = 'disable' 
+                     
+        if str(queston_2).strip() == 'on': template.queston_2 = 'enable'
+        else: template.queston_2 = 'disable'
+                     
+        if str(queston_3).strip() == 'on': template.queston_3 = 'enable'
+        else: template.queston_3 = 'disable'
+
+        if str(queston_4).strip() == 'on': template.queston_4 = 'enable'
+        else: template.queston_4 = 'disable'
+        
+        if str(queston_5).strip() == 'on': template.queston_5 = 'enable'
+        else: template.queston_5     = 'disable'
 
         template.first_name_q = first_name_q
         template.last_name_q = last_name_q
@@ -147,13 +176,24 @@ def edit_bot_tempates(request,id):
         template.template_name = template_name
         template.welcome_message = welcome_message
         template.end_message = end_message
+        template.quetion_1_q = queston_1_q
+        template.quetion_2_q = queston_2_q
+        template.quetion_3_q = queston_3_q
+        template.quetion_4_q = queston_4_q
+        template.quetion_5_q = queston_5_q
         print(template_name)
         
         template.save()
         return redirect(templates)
     template = Templates_v1.objects.get(id=id)
+    end_elements = elements.end_elements
+    welcome_elements = elements.welcome_elements
+    confirmation_elements = elements.confirmation_elements
     context={
-        'fields' : template
+        'fields' : template,
+        'end_elements': end_elements,
+        'welcome_elements': welcome_elements,
+        'confirmation_elements': confirmation_elements,
     }
     return render(request,'new_bot_template.html',context)
 
@@ -372,6 +412,14 @@ def whatsupbot(request):
                                     to=user_number
                                 )
 
+        # requesting the twilio to send message data from bot_number_with_platform to user_number
+        def send_media(media_url_list):
+            client.messages.create(
+                                    from_=bot_number_with_platform,
+                                    media_url= media_url_list,
+                                    to=user_number
+                                )
+
         
         # Verifying the bot registration and choosing the type of brain
         # intelligent, pretrained , this can be changed from admin dashboard
@@ -438,7 +486,10 @@ def whatsupbot(request):
                 # updating the questions to ask
                 '''question are updated based on the question file that can be controlled from dashboard'''
                 user_contact = user.contact
-                replay = reply_generator_model_1.Reply(bot_template.template_name,user_contact,message,admin_email)                      
+                replay = reply_generator_model_1.Reply(bot_template.template_name,user_contact,message,admin_email)    
+                
+                if user.waiting_for == 'done':  
+                    send_media('')                
 
                 send(replay)
                 print('REPLAY SEND SUCCESSFULLY')

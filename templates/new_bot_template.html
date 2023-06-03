@@ -188,6 +188,18 @@
     .slider.round:before {
       border-radius: 50%;
     }
+    .element_div{
+        background-color: rgb(224, 219, 219);
+        padding: 5px;
+        border-radius: 5px;
+        border: 1px solid black;
+        margin: 10px;
+        cursor: pointer;
+    }
+    .element_div p{
+        padding: 0px;
+        margin: 0px;
+    }
     </style>
 <body class="container">
 <div class="form">
@@ -207,15 +219,97 @@
                     <label>Template Name</label>
                     <input style="padding: 10px;border-radius: 10px;width: 20%;" value="{{fields.template_name}}" name="template_name">
                 </div>
+
+                <!-- /////////////////////// -->
                 <div class="main_container">
                     <label>Welcome Message</label>
-                    <input style="padding: 10px;border-radius: 10px;width: 20%;" value="{{fields.welcome_message}}" name="welcome_message">
+                    <textarea style="padding: 10px;border-radius: 10px;width: 100%;height: 100px;" value="{{fields.welcome_message}}" name="welcome_message" id="welcome_message" >{{fields.welcome_message}}</textarea>
+                    
                 </div>
+                <section style="display: flex;background-color: rgb(255, 255, 255);border: 1px solid black ;">
+                    {% for element in welcome_elements %}
+                        <div onclick="welcome_message(this.querySelector('.element').innerText)" class="element_div">
+                            {% if element == 'media' %}
+                            <input type="file" onchange="insert_media_welcome_message(this.value)">
+                            {% else %}
+                            <p class="element">{{element}}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </section>
+                <!-- ///////////////////////// -->
+
+                <!-- ///////////////////////////// -->
+                <div class="main_container">
+                    <label>Confirmation Message</label>
+                    <textarea style="padding: 10px;border-radius: 10px;width: 100%;height: 100px;" value="{{fields.confirmation_message}}" name="confirmation_message" id="confirmation_message">{{fields.confirmation_message}}</textarea>
+                   
+                </div>
+                <section style="display: flex;background-color: rgb(255, 255, 255);border: 1px solid black ;">
+                    {% for element in confirmation_elements %}
+                        <div onclick="confirmation_message(this.querySelector('.element').innerText)" class="element_div">
+                            {% if element == 'media' %}
+                            <input type="file" onchange="insert_media_confirmation_message(this.value)">
+                            {% else %}
+                            <p class="element">{{element}}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </section>
+                <!-- /////////////////////// -->
+
+                <!-- //////////////////////////// -->
                 <div class="main_container">
                     <label>End Message</label>
-                    <input style="padding: 10px;border-radius: 10px;width: 20%;" value="{{fields.end_message}}" name="end_message">
+                    <textarea style="padding: 10px;border-radius: 10px;width: 100%;height: 100px;" value="{{fields.end_message}}" name="end_message" id="end_message">{{fields.end_message}}</textarea>
+                   
                 </div>
+                <section style="display: flex;background-color: rgb(255, 255, 255);border: 1px solid black ;">
+                    {% for element in end_elements %}
+                        <div onclick="end_message(this.querySelector('.element').innerText)" class="element_div">
+                            {% if element == 'media' %}
+                            <input type="file" onchange="insert_media_end_message(this.value)">
+                            {% else %}
+                            <p class="element">{{element}}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </section>
+                <!-- ///////////////////////////// -->
 
+                
+                <script>
+                    function welcome_message(text){
+                    let welcome_message = document.getElementById('welcome_message')
+                    let element = document.querySelector('.element')
+                    welcome_message.value = welcome_message.value + '$'+text+'$'
+                    }
+                    function end_message(text){
+                        let end_message = document.getElementById('end_message')
+                        let element = document.querySelector('.element')
+                        end_message.value = end_message.value + '$'+text+'$'
+                    }
+                    function confirmation_message(text){
+                        let confirmation_message = document.getElementById('confirmation_message')
+                        let element = document.querySelector('.element')
+                        confirmation_message.value = confirmation_message.value + '$'+text+'$'
+                    }
+                    function insert_media_end_message(file){
+                        let end_message = document.getElementById('end_message')
+                        let element = document.querySelector('.element')
+                        end_message.value = end_message.value + '$'+ 'media'+file+'$'            
+                    }
+                    function insert_media_welcome_message(file){
+                        let welcome_message = document.getElementById('welcome_message')
+                        let element = document.querySelector('.element')
+                        welcome_message.value = welcome_message.value + '$'+ 'media'+file+'$'            
+                    }
+                    function insert_media_confirmation_message(file){
+                        let confirmation_message = document.getElementById('confirmation_message')
+                        let element = document.querySelector('.element')
+                        confirmation_message.value = confirmation_message.value + '$'+ 'media'+file+'$'            
+                    }
+                </script>
                 <div class="main_container">
                     <h4>First Name</h4>
                     <label class="switch">
@@ -276,6 +370,90 @@
                     <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="email_q">{{fields.email_q}}</textarea>
                     </div>
 
+
+                    <div class="main_container">
+                        <h4>Question 1</h4>
+                        <label class="switch">
+                        {% if fields.quesion_1 == 'enable' %}
+                        <input type="checkbox" checked name="question_1" >
+                        {% else %}
+                        <input type="checkbox" name="question_1" >
+                        {% endif %}
+                        <span class="slider round"></span>
+                        </label>            
+                        </div>
+                        <div style="margin: 5px;">
+                        <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="queston_1_q">{{fields.quetion_1_q}}</textarea>
+                        </div>
+    
+
+
+                        <div class="main_container">
+                            <h4>Question 2</h4>
+                            <label class="switch">
+                            {% if fields.quesion_1 == 'enable' %}
+                            <input type="checkbox" checked name="question_2" >
+                            {% else %}
+                            <input type="checkbox" name="question_2" >
+                            {% endif %}
+                            <span class="slider round"></span>
+                            </label>            
+                            </div>
+                            <div style="margin: 5px;">
+                            <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="queston_2_q">{{fields.quetion_2_q}}</textarea>
+                            </div>
+
+
+                            <div class="main_container">
+                                <h4>Question 3</h4>
+                                <label class="switch">
+                                {% if fields.quesion_1 == 'enable' %}
+                                <input type="checkbox" checked name="question_3" >
+                                {% else %}
+                                <input type="checkbox" name="question_3" >
+                                {% endif %}
+                                <span class="slider round"></span>
+                                </label>            
+                                </div>
+                                <div style="margin: 5px;">
+                                <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="queston_3_q">{{fields.quetion_3_q}}</textarea>
+                                </div>
+
+
+                                <div class="main_container">
+                                    <h4>Question 4</h4>
+                                    <label class="switch">
+                                    {% if fields.quesion_1 == 'enable' %}
+                                    <input type="checkbox" checked name="question_4" >
+                                    {% else %}
+                                    <input type="checkbox" name="question_4" >
+                                    {% endif %}
+                                    <span class="slider round"></span>
+                                    </label>            
+                                    </div>
+                                    <div style="margin: 5px;">
+                                    <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="queston_4_q">{{fields.quetion_4_q}}</textarea>
+                                    </div>
+
+
+                                    <div class="main_container">
+                                        <h4>Question 5</h4>
+                                        <label class="switch">
+                                        {% if fields.quesion_1 == 'enable' %}
+                                        <input type="checkbox" checked name="question_5" >
+                                        {% else %}
+                                        <input type="checkbox" name="question_5" >
+                                        {% endif %}
+                                        <span class="slider round"></span>
+                                        </label>            
+                                        </div>
+                                        <div style="margin: 5px;">
+                                        <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="queston_5_q">{{fields.quetion_5_q}}</textarea>
+                                        </div>
+                    
+                
+            
+        
                  
 
                 <button type="submit">submit</button>

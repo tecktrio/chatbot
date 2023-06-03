@@ -63,6 +63,11 @@ class Templates_v1(models.Model):
     quetion_4_q = models.CharField(max_length=100,default='question 4' )
     quetion_5 = models.CharField(max_length=50,default='disable')
     quetion_5_q = models.CharField(max_length=100,default='question 5' )
-    welcome_message = models.CharField(max_length=100,default='hi' )
-    end_message = models.CharField(max_length=100,default='thank you' )
+    welcome_message = models.CharField(max_length=500,default='hi' )
+    end_message = models.CharField(max_length=500,default='thank you' )
+    confirmation_message = models.CharField(max_length=500,default='confirm your details' )
     
+class Media(models.Model):
+    admin_email = models.CharField(max_length=100)
+    media = models.CharField(max_length=100)
+    media_type = models.CharField(max_length=100)
