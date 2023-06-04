@@ -171,7 +171,7 @@ def Reply(bot_template_name,user_contact,message,admin_email):
             text = text.replace('$contact$',user.contact)
             text = text.replace('$email$',user.email)
             text = text.replace('$next_line$','\n')
-            text = text + '\n' + chatbot_keywords.edit_message
+            # text = text + '\n' + chatbot_keywords.edit_message
   
             # media_url = chatbot_keywords.MediaUrl+str(bot_template.end_message_media)
             media_url = ''
