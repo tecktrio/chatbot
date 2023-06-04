@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bot',
-    'rest_framework'
+    'rest_framework',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -81,9 +82,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME':'widy',
         'USER':'root',
-        # 'USER':'widecity',
-        'PASSWORD':'1234'
-        # 'PASSWORD':'secure@2022'
+        'USER':'widecity',
+        # 'PASSWORD':'1234'
+        'PASSWORD':'secure@2022'
     }
 }
 
@@ -118,6 +119,15 @@ USE_I18N = True
 
 USE_TZ = True
 
+# setting up default values
+DEFAULT_AUTO_FIELD      = 'django.db.models.BigAutoField'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_STORAGE_BUCKET_NAME = 'bots.widecity.in'
+AWS_QUERYSTRING_AUTH    = True
+
+AWS_ACCESS_KEY_ID       = "AKIAYMOX7NSFHYVO34OG"
+AWS_SECRET_ACCESS_KEY   = "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"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/

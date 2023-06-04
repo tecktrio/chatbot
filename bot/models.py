@@ -9,6 +9,11 @@ class Users(models.Model):
     # count = models.IntegerField(default=-1)#1,2,3
     first_name=models.CharField(max_length=100,default='')
     last_name=models.CharField(max_length=100,default='')
+    question_1=models.CharField(max_length=100,default='')
+    question_2=models.CharField(max_length=100,default='')
+    question_3=models.CharField(max_length=100,default='')
+    question_4=models.CharField(max_length=100,default='')
+    question_5=models.CharField(max_length=100,default='')
     waiting_for=models.CharField(max_length=100,default='')
     
     
@@ -66,8 +71,11 @@ class Templates_v1(models.Model):
     welcome_message = models.CharField(max_length=500,default='hi' )
     end_message = models.CharField(max_length=500,default='thank you' )
     confirmation_message = models.CharField(max_length=500,default='confirm your details' )
+    brain_model = models.CharField(max_length=500,default='fully-intelligent' )
+    welcome_message_media = models.FileField(upload_to='whatsup/',default='')
+    welcome_message_media_type = models.CharField(max_length=100,default='')
+    end_message_media = models.FileField(upload_to='whatsup/',default='')
+    end_message_media_type = models.CharField(max_length=100,default='')
+    confirmation_message_media = models.FileField(upload_to='whatsup/',default='')
+    confirmation_message_media_type = models.CharField(max_length=100,default='')
     
-class Media(models.Model):
-    admin_email = models.CharField(max_length=100)
-    media = models.CharField(max_length=100)
-    media_type = models.CharField(max_length=100)

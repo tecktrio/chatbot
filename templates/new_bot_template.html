@@ -214,10 +214,20 @@
         <div>
 
             <!-- //////////// -->
-            <form action="/edit_bot_template/{{fields.id}}" method="POST">
+            <form action="/edit_bot_template/{{fields.id}}" method="POST"  enctype="multipart/form-data">
                 <div class="main_container">
                     <label>Template Name</label>
                     <input style="padding: 10px;border-radius: 10px;width: 20%;" value="{{fields.template_name}}" name="template_name">
+                </div>
+
+                <div class="main_container">
+                    <label>Brain Model</label>
+                    <select style="border-radius: 10px;"  name="brain_model">
+                        <option selected>{{fields.brain_model}}</option>
+                        {% for model in brain_models %}
+                        <option>{{model}}</option>
+                        {% endfor %}
+                    </select>
                 </div>
 
                 <!-- /////////////////////// -->
@@ -230,10 +240,14 @@
                     {% for element in welcome_elements %}
                         <div onclick="welcome_message(this.querySelector('.element').innerText)" class="element_div">
                             {% if element == 'media' %}
-                            <input type="file" onchange="insert_media_welcome_message(this.value)">
+                            <div>
+                                <label>Attach File</label>
+                                <input type="file" name="welcome_message_media">
+                            </div>
                             {% else %}
                             <p class="element">{{element}}</p>
                             {% endif %}
+                            
                         </div>
                     {% endfor %}
                 </section>
@@ -249,7 +263,10 @@
                     {% for element in confirmation_elements %}
                         <div onclick="confirmation_message(this.querySelector('.element').innerText)" class="element_div">
                             {% if element == 'media' %}
-                            <input type="file" onchange="insert_media_confirmation_message(this.value)">
+                            <div>
+                                <label>Attach File</label>
+                                <input type="file" name="confirmation_message_media">
+                            </div>
                             {% else %}
                             <p class="element">{{element}}</p>
                             {% endif %}
@@ -268,7 +285,10 @@
                     {% for element in end_elements %}
                         <div onclick="end_message(this.querySelector('.element').innerText)" class="element_div">
                             {% if element == 'media' %}
-                            <input type="file" onchange="insert_media_end_message(this.value)">
+                            <div>
+                                <label>Attach File</label>
+                                <input type="file" name="end_message_media">
+                            </div>
                             {% else %}
                             <p class="element">{{element}}</p>
                             {% endif %}
@@ -374,7 +394,7 @@
                     <div class="main_container">
                         <h4>Question 1</h4>
                         <label class="switch">
-                        {% if fields.quesion_1 == 'enable' %}
+                        {% if fields.quetion_1 == 'enable' %}
                         <input type="checkbox" checked name="question_1" >
                         {% else %}
                         <input type="checkbox" name="question_1" >
@@ -391,7 +411,7 @@
                         <div class="main_container">
                             <h4>Question 2</h4>
                             <label class="switch">
-                            {% if fields.quesion_1 == 'enable' %}
+                            {% if fields.quetion_2 == 'enable' %}
                             <input type="checkbox" checked name="question_2" >
                             {% else %}
                             <input type="checkbox" name="question_2" >
@@ -407,7 +427,7 @@
                             <div class="main_container">
                                 <h4>Question 3</h4>
                                 <label class="switch">
-                                {% if fields.quesion_1 == 'enable' %}
+                                {% if fields.quetion_3 == 'enable' %}
                                 <input type="checkbox" checked name="question_3" >
                                 {% else %}
                                 <input type="checkbox" name="question_3" >
@@ -423,7 +443,7 @@
                                 <div class="main_container">
                                     <h4>Question 4</h4>
                                     <label class="switch">
-                                    {% if fields.quesion_1 == 'enable' %}
+                                    {% if fields.quetion_4 == 'enable' %}
                                     <input type="checkbox" checked name="question_4" >
                                     {% else %}
                                     <input type="checkbox" name="question_4" >
@@ -436,20 +456,20 @@
                                     </div>
 
 
-                                    <div class="main_container">
-                                        <h4>Question 5</h4>
-                                        <label class="switch">
-                                        {% if fields.quesion_1 == 'enable' %}
-                                        <input type="checkbox" checked name="question_5" >
-                                        {% else %}
-                                        <input type="checkbox" name="question_5" >
-                                        {% endif %}
-                                        <span class="slider round"></span>
-                                        </label>            
-                                        </div>
-                                        <div style="margin: 5px;">
-                                        <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="queston_5_q">{{fields.quetion_5_q}}</textarea>
-                                        </div>
+                                <div class="main_container">
+                                    <h4>Question 5</h4>
+                                    <label class="switch">
+                                    {% if fields.quetion_5 == 'enable' %}
+                                    <input type="checkbox" checked name="question_5" >
+                                    {% else %}
+                                    <input type="checkbox" name="question_5" >
+                                    {% endif %}
+                                    <span class="slider round"></span>
+                                    </label>            
+                                    </div>
+                                    <div style="margin: 5px;">
+                                    <textarea style="padding: 10px;border-radius: 10px;width: 100%;" name="queston_5_q">{{fields.quetion_5_q}}</textarea>
+                                    </div>
                     
                 
             
